@@ -200,6 +200,9 @@ cython_debug/
 # Python virtual environment — never commit this (100MB+, machine-specific)
 backend/venv/
 
+# React/Node dependencies — never commit this (reinstall with npm install)
+frontend/node_modules/
+
 # Visual Studio Code
 #   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
 #   that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
