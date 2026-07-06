@@ -3,7 +3,7 @@
 **Developer:** Vikas Gage | **Company:** Decos (Medical Device)
 **Goal:** Type symptoms → AI returns disease name + confidence score
 **Company Deadline:** End of Q3 2026 | **Our Sprint:** 2 Weeks (10 working days)
-**Tech Stack:** Python · HuggingFace Transformers · Gradio · Kaggle · GitHub
+**Tech Stack:** Python · FastAPI · HuggingFace Transformers · PyTorch · React 19 · Vite · Tailwind CSS · Kaggle · GitHub
 
 > 💡 **North Star:** At the end of Week 2, you must be able to DEMO the app
 > AND confidently answer any question from the audience — technical or non-technical.
@@ -13,13 +13,13 @@
 ## 🗺️ High-Level Roadmap
 
 ```
-WEEK 1 — UNDERSTAND & BUILD CORE        WEEK 2 — COMPLETE & PRESENT
+WEEK 1 — UNDERSTAND & BUILD AI CORE     WEEK 2 — FULL STACK + DEMO
 ─────────────────────────────────        ──────────────────────────────────────
-Day 1 → Setup + Tools                    Day 6  → Full Pipeline + Accuracy Metrics
-Day 2 → AI/ML/NLP Concepts (Deep)        Day 7  → Gradio UI Part 1 (Basic)
-Day 3 → HuggingFace + First Model        Day 8  → Gradio UI Part 2 (Polished)
-Day 4 → Dataset + Data Understanding     Day 9  → Testing + Limitations Documented
-Day 5 → Classification Pipeline Pt.1     Day 10 → Demo Rehearsal + Q&A Preparation
+Day 1 → Setup (Python + Node.js)         Day 6  → FastAPI — Expose AI as REST API
+Day 2 → AI/ML/NLP Concepts (Deep)        Day 7  → React UI Part 1 (Components + API)
+Day 3 → HuggingFace + First Model        Day 8  → React UI Part 2 (Tailwind + Polish)
+Day 4 → Dataset + Data Understanding     Day 9  → Full Integration + Testing
+Day 5 → AI Classification Pipeline       Day 10 → Demo Rehearsal + Final Push
 ```
 
 ---
@@ -30,20 +30,20 @@ Day 5 → Classification Pipeline Pt.1     Day 10 → Demo Rehearsal + Q&A Prepa
 
 | Day | Theme | Build Goal | Learn Goal (for Q&A) | Status |
 |-----|-------|-----------|----------------------|--------|
-| 1 | ⚙️ Setup | Python env, packages, `requirements.txt` | What is Python? Why not C#? | 🔄 In Progress |
+| 1 | ⚙️ Setup | Python env + Node.js + React app scaffolded | What is Python? Why FastAPI not C# API? | 🔄 In Progress |
 | 2 | 🧠 Concepts | Personal concept cheat-sheet | AI vs ML vs DL vs NLP — explain each | ⏳ Pending |
 | 3 | 🤗 First Model | `hello_ai.py` prints a real classification | What is HuggingFace? What is a model? | ⏳ Pending |
 | 4 | 📊 Dataset | Dataset downloaded + explored | Where does training data come from? | ⏳ Pending |
-| 5 | 🔧 Pipeline Pt.1 | Symptoms text → tokenized → model input | What is tokenization? | ⏳ Pending |
+| 5 | 🔧 AI Pipeline | Full pipeline: symptoms → model → disease + confidence | What is tokenization? How does inference work? | ⏳ Pending |
 
-### ── WEEK 2: Build, Polish & Present ──
+### ── WEEK 2: Full Stack Build & Demo ──
 
 | Day | Theme | Build Goal | Learn Goal (for Q&A) | Status |
 |-----|-------|-----------|----------------------|--------|
-| 6 | 🔧 Pipeline Pt.2 | Full output: disease + confidence score + accuracy | What is confidence? How accurate is it? | ⏳ Pending |
-| 7 | 🖥️ UI Part 1 | `app.py` running in browser via Gradio | What is Gradio? Why not a React app? | ⏳ Pending |
-| 8 | 🎨 UI Part 2 | Top 3 diseases, confidence bar, clean design | How would this go to production? | ⏳ Pending |
-| 9 | 🧪 Testing | 20+ test cases logged, limitations documented | What can it NOT do? What are the risks? | ⏳ Pending |
+| 6 | 🌐 FastAPI | Python REST API — `/classify` endpoint live | What is FastAPI? How does React talk to Python? | ⏳ Pending |
+| 7 | ⚛️ React Part 1 | React components + wired to FastAPI + data displayed | What is React? What is a component? | ⏳ Pending |
+| 8 | 🎨 React Part 2 | Tailwind CSS — responsive cards, confidence bars, polish | How would this go to production? | ⏳ Pending |
+| 9 | 🧪 Testing | Full integration tests + edge cases + limitations docs | What can it NOT do? What are the risks? | ⏳ Pending |
 | 10 | 🎤 Demo Day | Clean GitHub push + dry run rehearsed | Full Q&A prep (all audience types) | ⏳ Pending |
 
 ---
@@ -53,20 +53,34 @@ Day 5 → Classification Pipeline Pt.1     Day 10 → Demo Rehearsal + Q&A Prepa
 ```
 ai-automated-disease-classification/
 │
-├── Progress.md                  ← Roadmap + Q&A prep (this file)
-├── README.md                    ← Project overview (Day 10)
-├── requirements.txt             ← Python packages (Day 1)
+├── Progress.md                        ← Roadmap + Q&A prep (this file)
+├── README.md                          ← Project overview (Day 10)
 │
-├── src/
-│   ├── hello_ai.py              ← First model test (Day 3)
-│   ├── pipeline.py              ← Core classification logic (Day 5–6)
-│   └── app.py                   ← Gradio UI (Day 7–8)
+├── backend/                           ← Python AI + API
+│   ├── requirements.txt               ← Python packages (Day 1)
+│   ├── hello_ai.py                    ← First model test (Day 3)
+│   ├── pipeline.py                    ← Core AI classification logic (Day 5)
+│   ├── main.py                        ← FastAPI server + /classify endpoint (Day 6)
+│   └── data/
+│       └── symptoms_dataset.csv       ← From Kaggle (Day 4)
 │
-├── data/
-│   └── symptoms_dataset.csv     ← From Kaggle (Day 4)
+├── frontend/                          ← React 19 + Vite + Tailwind CSS
+│   ├── package.json                   ← Node packages (Day 1)
+│   ├── index.html                     ← App entry point
+│   ├── tailwind.config.js             ← Tailwind design tokens
+│   └── src/
+│       ├── main.jsx                   ← React entry point
+│       ├── App.jsx                    ← Root component
+│       ├── components/
+│       │   ├── SymptomInput.jsx       ← Text input + submit button (Day 7)
+│       │   ├── ResultCard.jsx         ← Disease result card (Day 7)
+│       │   ├── ConfidenceBar.jsx      ← Color-coded progress bar (Day 8)
+│       │   └── Header.jsx             ← Top navigation bar (Day 8)
+│       └── services/
+│           └── api.js                 ← Calls FastAPI /classify (Day 7)
 │
 └── tests/
-    └── test_symptoms.py         ← 20+ test cases (Day 9)
+    └── test_pipeline.py               ← AI pipeline test cases (Day 9)
 ```
 
 ---
@@ -135,44 +149,50 @@ ai-automated-disease-classification/
 
 ---
 
-### Day 1 — ⚙️ Environment Setup
-**Theme:** Get the machine ready to do AI work
-**Q&A Answers Built:** T8 — *"Why Python and not C#?"*
+### Day 1 — ⚙️ Environment Setup (Python + Node.js + React)
+**Theme:** Set up BOTH the AI backend and React frontend environments
+**Q&A Answers Built:** T8 — *"Why Python + FastAPI and not C#?"*
 
 #### 📖 LEARN
 - What is Python? How is it different from C#?
 - What is a virtual environment? *(C# analogy: isolated NuGet per project)*
 - What is `pip`? *(C# analogy: NuGet CLI)*
 - What is `requirements.txt`? *(C# analogy: `.csproj` PackageReference list)*
-- Why do AI developers use Python? (ecosystem, libraries, community)
+- What is Node.js? *(JavaScript runtime — needed to run React tooling)*
+- What is Vite? *(C# analogy: `dotnet new` project scaffolding — but for React)*
+- What is npm? *(C# analogy: NuGet — but for JavaScript)*
 
 #### 🧠 UNDERSTAND
-- Why can't we just use C# for this POC? *(AI library availability)*
-- What packages will we install and what does each one do?
-  - `transformers` — HuggingFace AI models library
-  - `torch` — Math engine that powers the models (PyTorch)
-  - `gradio` — Quick UI framework for AI demos
-  - `pandas` — Data manipulation (like LINQ + DataTable combined)
-  - `scikit-learn` — Accuracy metrics and evaluation tools
-- Q&A answer: *"Why Python?"* ← write your own answer here after the session
+- Why Python for AI and not C#? *(AI library ecosystem)*
+- Why React for UI and not Blazor? *(industry standard, modern, component-based)*
+- Why FastAPI as the bridge? *(lightest Python REST API — C# analogy: minimal ASP.NET Core)*
+- What packages will we install?
+  - **Python:** `transformers`, `torch`, `fastapi`, `uvicorn`, `pandas`, `scikit-learn`
+  - **Node/React:** `react`, `react-dom`, `tailwindcss`, `axios`, `vite`
+- How does React talk to FastAPI? *(HTTP POST — same as any REST API call)*
+- Q&A answer: *"Why this stack?"* ← write your own answer here after the session
 
 #### 💻 IMPLEMENT
-- [ ] Verify Python is installed (`python --version`)
-- [ ] Create virtual environment (`python -m venv venv`)
-- [ ] Activate it (`venv\Scripts\activate`)
-- [ ] Install all packages (`pip install ...`)
-- [ ] Generate `requirements.txt` (`pip freeze > requirements.txt`)
-- [ ] Commit and push to GitHub
-- [ ] VS Code Python extension configured and pointing to venv
+- [ ] Verify Python installed (`python --version`)
+- [ ] Create `backend/` folder
+- [ ] Create Python virtual environment inside `backend/`
+- [ ] Install all Python packages
+- [ ] Generate `backend/requirements.txt`
+- [ ] Verify Node.js installed (`node --version`)
+- [ ] Scaffold React app with Vite inside `frontend/`
+- [ ] Install Tailwind CSS in the React project
+- [ ] Run React app in browser (`npm run dev`) — see default page
+- [ ] Commit both `backend/` and `frontend/` scaffolds to GitHub
 
 #### ✅ Checklist
 - [x] GitHub repo created
 - [x] Repo cloned locally
 - [x] `Progress.md` created
-- [ ] Python verified
-- [ ] Virtual env created and activated
-- [ ] All packages installed
-- [ ] `requirements.txt` pushed to GitHub
+- [ ] Python verified + `backend/` venv set up
+- [ ] All Python packages installed
+- [ ] Node.js verified + `frontend/` React app created
+- [ ] Tailwind CSS configured
+- [ ] Both environments committed to GitHub
 
 ---
 
@@ -255,102 +275,116 @@ ai-automated-disease-classification/
 
 ---
 
-### Day 5 — 🔧 Classification Pipeline Part 1
-**Theme:** Connect symptoms text to the AI model input
-**Q&A Answers Built:** T9 — *"What is tokenization?"*
+### Day 5 — 🔧 Full AI Classification Pipeline
+**Theme:** Complete the AI engine — symptoms in, disease + confidence out
+**Q&A Answers Built:** T9, T4, C1, C3 — *"Tokenization? Confidence? Accuracy? Top 3?"*
 
 #### 📖 LEARN
-- What is a pipeline in AI? *(C# analogy: middleware chain / CQRS handler chain)*
+- What is a pipeline in AI? *(C# analogy: CQRS handler chain — each step transforms the data)*
 - What is tokenization? *(breaking text into pieces the model understands)*
-- What is text preprocessing? (lowercase, remove punctuation, etc.)
-- What goes IN to a model? (not raw text — numbers called tokens)
-
-#### 🧠 UNDERSTAND
-- Step by step: raw text → cleaned → tokenized → model-ready input
-- Why can't we just send "fever, headache" directly to the model?
-- What is a token ID vs a word?
-- Q&A answer to fill: T9
-
-#### 💻 IMPLEMENT
-- [ ] Create `src/pipeline.py` (Part 1)
-- [ ] Function: takes symptoms string → cleans it → tokenizes it
-- [ ] Print token output so you can see what the model actually receives
-- [ ] Commit to GitHub
-
----
-
-### Day 6 — 🔧 Pipeline Part 2 + Accuracy Metrics
-**Theme:** Get the full result and measure how good it is
-**Q&A Answers Built:** C1, C3, T4, A3, A4 — *"How accurate? Confidence score? Top 3?"*
-
-#### 📖 LEARN
 - What is model inference? *(running the model to get a prediction)*
-- What is a confidence score / probability? *(how sure the model is)*
-- What is model accuracy? *(% of correct predictions)*
-- What is F1 Score? Why not just use accuracy? *(important for medical data)*
+- What is a confidence score? *(how sure the model is — 0.0 to 1.0)*
+- What is F1 Score? Why not just accuracy? *(critical for medical imbalanced data)*
 
 #### 🧠 UNDERSTAND
-- How does the model output a confidence score?
+- Full step-by-step flow: raw symptoms → cleaned → tokenized → model → top 3 results
+- Why can't we just send "fever, headache" directly to the model?
 - What does 92% confidence actually mean mathematically?
-- Why show top 3 diseases instead of just one?
-- What metrics matter for a medical classification tool?
-- Q&A answers to fill: C1, C3, T4, A3, A4
+- Why show top 3 diseases instead of just 1?
+- Q&A answers to fill: T9, T4, C1, C3
 
 #### 💻 IMPLEMENT
-- [ ] Complete `src/pipeline.py` (Part 2)
-- [ ] Output: top 3 diseases with confidence scores
-- [ ] Run against 10 test symptom inputs
-- [ ] Print accuracy metrics (if using the dataset for evaluation)
+- [ ] Create `backend/pipeline.py`
+- [ ] Function: takes symptoms string → returns top 3 diseases with confidence scores
+- [ ] Test with 10 different symptom inputs — print all results
 - [ ] Commit to GitHub
 
 ---
 
-### Day 7 — 🖥️ Gradio UI Part 1 (Basic)
-**Theme:** Give the AI a face — a real browser-based UI
-**Q&A Answers Built:** T7 (partial) — *"Why Gradio and not a React app?"*
+### Day 6 — 🌐 FastAPI — Expose AI as REST API
+**Theme:** Wrap the AI pipeline in a real REST API so React can call it
+**Q&A Answers Built:** T5, A3 — *"How does React talk to Python? Request/response flow?"*
 
 #### 📖 LEARN
-- What is Gradio? *(C# analogy: Blazor quick demo — UI with almost no frontend code)*
-- What is a web server in Python context?
-- How does Gradio connect the UI to your Python function?
+- What is FastAPI? *(C# analogy: ASP.NET Core Minimal API — but Python)*
+- What is a REST endpoint? *(you already know this from .NET!)*
+- What is CORS? Why does the browser block cross-origin calls?
+- What is `uvicorn`? *(C# analogy: Kestrel web server — hosts the FastAPI app)*
+- What is Swagger/OpenAPI? *(FastAPI generates it automatically — same as .NET!)*
 
 #### 🧠 UNDERSTAND
-- Why Gradio for a POC instead of React/Angular?
-- What are Gradio's limitations? *(not production-grade)*
-- How would this become a real product? *(REST API + React frontend + .NET backend)*
-- Q&A answer to fill: T7 (partial), A1 (architecture diagram sketch)
+- Exact API contract React will use:
+  - **Request:** `POST /classify` → `{ "symptoms": "fever, headache" }`
+  - **Response:** `{ "results": [{ "disease": "Influenza", "confidence": 0.92 }] }`
+- How React calls this *(same pattern as calling any .NET REST API from a frontend)*
+- Q&A answers to fill: T5, A3
 
 #### 💻 IMPLEMENT
-- [ ] Create `src/app.py`
-- [ ] Text input box + Submit button + Output text area
-- [ ] Wire it to `pipeline.py` classification function
-- [ ] Run `python src/app.py` → open browser → test it
+- [ ] Create `backend/main.py` with FastAPI
+- [ ] Define request/response models (Pydantic — C# analogy: DTOs / record types)
+- [ ] Add `POST /classify` endpoint that calls `pipeline.py`
+- [ ] Add CORS middleware (allow React `localhost:5173` to call it)
+- [ ] Run: `uvicorn main:app --reload`
+- [ ] Test in browser auto-generated Swagger UI at `/docs`
 - [ ] Commit to GitHub
 
 ---
 
-### Day 8 — 🎨 Gradio UI Part 2 (Demo-Ready Polish)
-**Theme:** Make the UI look good enough for a company demo
-**Q&A Answers Built:** M3, T5, T6, A1 — *"Production? Azure? .NET integration? Architecture?"*
+### Day 7 — ⚛️ React Part 1 (Components + API Integration)
+**Theme:** Build React UI connected live to the FastAPI backend
+**Q&A Answers Built:** T7 — *"Why React? What is a component?"*
 
 #### 📖 LEARN
-- What UI components does Gradio offer? (sliders, dropdowns, tables, labels)
-- What makes a demo UI look professional?
-- What is a confidence bar / progress bar in UI terms?
+- What is React? *(C# analogy: components = C# classes — each has state + renders UI)*
+- What is JSX? *(HTML written inside JavaScript — like Razor in Blazor)*
+- What is a component? *(C# analogy: reusable UI class, props = constructor params)*
+- What is `useState`? *(C# analogy: private field that triggers UI re-render on change)*
+- What is `axios`? *(C# analogy: `HttpClient` — calls the FastAPI REST endpoint)*
 
 #### 🧠 UNDERSTAND
-- How would we integrate this with a .NET REST API? *(HTTP call from C# to Python FastAPI)*
-- How would we deploy this to Azure? *(Azure Container Instance / App Service)*
-- Draw the production architecture: .NET API → Python Model Service → Response
-- Q&A answers to fill: M3, T5, T6, A1
+- Component tree: `App → Header + SymptomInput + ResultCards`
+- Data flow: user types → state updates → axios POST → results render
+- Why React over plain HTML? *(reactivity, reusability, industry standard)*
+- Q&A answers to fill: T7, A1
 
 #### 💻 IMPLEMENT
-- [ ] Show top 3 diseases with confidence percentages
-- [ ] Add confidence progress bars
-- [ ] Add example symptom inputs (clickable)
-- [ ] Add app title, description, disclaimer text
-- [ ] Test the full UI end to end
-- [ ] Commit polished `app.py` to GitHub
+- [ ] Create `frontend/src/components/Header.jsx`
+- [ ] Create `frontend/src/components/SymptomInput.jsx` — textarea + submit + loading state
+- [ ] Create `frontend/src/services/api.js` — axios POST to FastAPI `/classify`
+- [ ] Create `frontend/src/components/ResultCard.jsx` — one disease result
+- [ ] Wire everything in `App.jsx`
+- [ ] Run both: frontend (`npm run dev`) + backend (`uvicorn`) simultaneously
+- [ ] End-to-end test: type symptoms → see real AI results in browser
+- [ ] Commit to GitHub
+
+---
+
+### Day 8 — 🎨 React Part 2 (Tailwind CSS + Responsive + Polish)
+**Theme:** Make the app look pixel-perfect and genuinely demo-ready
+**Q&A Answers Built:** M3, T6, A1 — *"Production? Azure deploy? Architecture diagram?"*
+
+#### 📖 LEARN
+- What is Tailwind CSS? *(utility-first CSS — design system as class names)*
+- What is responsive design in Tailwind? *(`sm:` `md:` `lg:` breakpoint prefixes)*
+- What makes a UI look trustworthy for a medical/enterprise audience?
+
+#### 🧠 UNDERSTAND
+- Color palette: medical blue + white + semantic confidence colors
+- Green (≥80%) / Yellow (≥50%) / Red (<50%) — why these thresholds for medical?
+- How would this be deployed to Azure? *(React → Azure Static Web App, FastAPI → Azure Container App)*
+- Full production architecture diagram
+- Q&A answers to fill: M3, T6, A1
+
+#### 💻 IMPLEMENT
+- [ ] Apply Tailwind medical blue color theme across all components
+- [ ] `ConfidenceBar.jsx` — animated, color-coded progress bar
+- [ ] Responsive layout — 3 cards side by side desktop → stacked on mobile
+- [ ] Metrics summary row — top disease, confidence %, total matches
+- [ ] Clickable example symptom chips (quick-fill input buttons)
+- [ ] Loading spinner while API processes
+- [ ] Styled disclaimer footer — warning box
+- [ ] Test at multiple window sizes — fully responsive
+- [ ] Commit final polished UI to GitHub
 
 ---
 
