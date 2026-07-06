@@ -197,6 +197,9 @@ cython_debug/
 # Visual Studio (not VS Code) — local editor state, solution indexes, sqlite cache
 .vs/
 
+# Python virtual environment — never commit this (100MB+, machine-specific)
+backend/venv/
+
 # Visual Studio Code
 #   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
 #   that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore

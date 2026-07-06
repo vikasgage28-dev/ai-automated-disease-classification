@@ -30,7 +30,7 @@ Day 5 → AI Classification Pipeline       Day 10 → Demo Rehearsal + Final Pus
 
 | Day | Theme | Build Goal | Learn Goal (for Q&A) | Status |
 |-----|-------|-----------|----------------------|--------|
-| 1 | ⚙️ Setup | Python env + Node.js + React app scaffolded | What is Python? Why FastAPI not C# API? | 🔄 In Progress |
+| 1 | ⚙️ Setup | Python env + Node.js + React app scaffolded | What is Python? Why FastAPI not C# API? | ✅ Done |
 | 2 | 🧠 Concepts | Personal concept cheat-sheet | AI vs ML vs DL vs NLP — explain each | ⏳ Pending |
 | 3 | 🤗 First Model | `hello_ai.py` prints a real classification | What is HuggingFace? What is a model? | ⏳ Pending |
 | 4 | 📊 Dataset | Dataset downloaded + explored | Where does training data come from? | ⏳ Pending |
@@ -188,11 +188,12 @@ ai-automated-disease-classification/
 - [x] GitHub repo created
 - [x] Repo cloned locally
 - [x] `Progress.md` created
-- [ ] Python verified + `backend/` venv set up
-- [ ] All Python packages installed
+- [x] Python 3.13.14 verified + `backend/` venv set up
+- [x] All Python packages installed (torch 2.12.1, transformers 5.13.0, fastapi, uvicorn, pandas, scikit-learn)
+- [x] `requirements.txt` generated
 - [ ] Node.js verified + `frontend/` React app created
 - [ ] Tailwind CSS configured
-- [ ] Both environments committed to GitHub
+- [ ] Everything committed to GitHub
 
 ---
 
