@@ -31,8 +31,8 @@ Day 5 → AI Classification Pipeline       Day 10 → Demo Rehearsal + Final Pus
 | Day | Theme | Build Goal | Learn Goal (for Q&A) | Status |
 |-----|-------|-----------|----------------------|--------|
 | 1 | ⚙️ Setup | Python env + Node.js + React app scaffolded | What is Python? Why FastAPI not C# API? | ✅ Complete |
-| 2 | 🧠 Concepts | Personal concept cheat-sheet | AI vs ML vs DL vs NLP — explain each | ⏳ Pending |
-| 3 | 🤗 First Model | `hello_ai.py` prints a real classification | What is HuggingFace? What is a model? | ⏳ Pending |
+| 2 | 🧠 Concepts | Personal concept cheat-sheet | AI vs ML vs DL vs NLP — explain each | ✅ Complete |
+| 3 | 🤗 First Model | `hello_ai.py` prints a real classification | What is HuggingFace? What is a model? | ✅ Complete |
 | 4 | 📊 Dataset | Dataset downloaded + explored | Where does training data come from? | ⏳ Pending |
 | 5 | 🔧 AI Pipeline | Full pipeline: symptoms → model → disease + confidence | What is tokenization? How does inference work? | ⏳ Pending |
 
@@ -94,12 +94,12 @@ ai-automated-disease-classification/
 
 | # | Question | Answer (built during sprint) |
 |---|----------|------------------------------|
-| M1 | What problem does this solve? | *(Day 2 — filled in)* |
+| M1 | What problem does this solve? | Doctors and patients waste time on initial symptom triage. This tool instantly analyses symptom text and returns the most likely diseases with confidence scores — speeding up the triage process and surfacing possibilities a clinician can investigate further. |
 | M2 | How long did this take to build? | *(Day 10 — filled in)* |
 | M3 | Can we use this in a real product? | *(Day 9 — filled in)* |
 | M4 | What would it cost to run in production? | *(Day 10 — filled in)* |
 | M5 | Is patient data safe? GDPR? | *(Day 9 — filled in)* |
-| M6 | Can it replace a doctor? | *(Day 2 — filled in)* |
+| M6 | Can it replace a doctor? | No — and we are very clear about that. This is a decision-support tool, not a diagnostic tool. It surfaces possibilities for a clinician to consider — like a spell-checker helps a writer but never replaces them. Every result shows a disclaimer: "Always consult a qualified medical professional." |
 
 ### 🔬 Medical / Clinical Questions
 
@@ -118,14 +118,14 @@ ai-automated-disease-classification/
 |---|----------|------------------------------|
 | T1 | What AI model is being used? Why that one? | *(Day 3 — filled in)* |
 | T2 | Did you train the model yourself? | *(Day 3 — filled in)* |
-| T3 | What is HuggingFace? | *(Day 3 — filled in)* |
+| T3 | What is HuggingFace? | HuggingFace is the GitHub + NuGet of the AI world — a platform with 500,000+ free pre-trained models. We use their Python library to load a model in 3 lines of code. No training required — just download and use. |
 | T4 | What is a confidence score? How is it calculated? | *(Day 6 — filled in)* |
 | T5 | How would we integrate this with our .NET backend? | *(Day 8 — filled in)* |
 | T6 | Can this be deployed to Azure? | *(Day 10 — filled in)* |
 | T7 | How does it scale? What if 1000 users hit it? | *(Day 10 — filled in)* |
 | T8 | Why Python and not C#? | *(Day 1 — filled in)* |
-| T9 | What is tokenization? | *(Day 5 — filled in)* |
-| T10 | What is the difference between AI, ML, and NLP? | *(Day 2 — filled in)* |
+| T9 | What is tokenization? | AI models only understand numbers, not text. Tokenization converts human text into a sequence of number IDs the model can process. Example: "fever headache" → [8915, 2132]. Like Encoding.UTF8.GetBytes() in C# but smarter — it preserves language meaning. |
+| T10 | What is the difference between AI, ML, and NLP? | AI is the broad field of making computers do human-like tasks. Machine Learning is a subset of AI where the computer learns patterns from data instead of following hand-written rules. Deep Learning is a subset of ML using neural networks. NLP (Natural Language Processing) is Deep Learning applied specifically to human language — reading, understanding and classifying text. Our POC uses NLP because the input is free text symptoms. |
 
 ### 🏗️ Architecture Questions
 
@@ -204,24 +204,29 @@ ai-automated-disease-classification/
 **Q&A Answers Built:** M1, M6, T10 — *"What is AI/ML/NLP?", "Can it replace a doctor?"*
 
 #### 📖 LEARN
-- What is Artificial Intelligence? *(broad umbrella)*
-- What is Machine Learning? *(AI that learns from data)*
-- What is Deep Learning? *(ML using neural networks)*
-- What is NLP — Natural Language Processing? *(AI that understands text)*
+- What is Artificial Intelligence? *(broad umbrella — computers doing human-like tasks)*
+- What is Machine Learning? *(AI that learns from data instead of hand-written rules)*
+- What is Deep Learning? *(ML using neural networks — chains of math operations)*
+- What is NLP? *(Deep Learning for human language — text understanding)*
 - What is a Classification problem? *(input → one of N categories)*
-- What is a pre-trained model?
+- What is a pre-trained model? *(trained by researchers on millions of examples — we just use it)*
 
 #### 🧠 UNDERSTAND
-- AI vs ML vs DL vs NLP — how they nest inside each other
-- Why is NLP the right tool for symptoms-to-disease?
-- What does "the model learned from data" actually mean?
-- What is a label? What is a feature? *(C# analogy: label = return type, feature = method parameter)*
-- Q&A answers to fill: M1, M6, T10
+- AI → ML → DL → NLP nest inside each other like Russian dolls
+- Why NLP for our POC? Because input is free text, not structured numbers
+- Traditional code: YOU write rules. AI: computer LEARNS rules from data
+- Pre-trained model = NuGet package for AI — download and use, don't build from scratch
+- Label = the answer (disease name). Feature = the input (symptoms text)
+
+#### ✅ Q&A Answers Completed
+- [x] M1 — What problem does this solve?
+- [x] M6 — Can it replace a doctor?
+- [x] T10 — What is the difference between AI, ML and NLP?
 
 #### 💻 IMPLEMENT
-- [ ] Draw the AI/ML/NLP hierarchy diagram (in your notes)
-- [ ] Write a plain-English explanation of how our POC works end-to-end
-- [ ] Update Q&A bank with answers for M1, M6, T10
+- [x] AI/ML/NLP hierarchy understood
+- [x] Plain-English POC flow understood: symptoms → NLP → classification → confidence
+- [x] Q&A bank updated with answers for M1, M6, T10
 
 ---
 
@@ -243,11 +248,26 @@ ai-automated-disease-classification/
 - Q&A answers to fill: T1, T2, T3, A2
 
 #### 💻 IMPLEMENT
-- [ ] Create HuggingFace account at huggingface.co
-- [ ] Create `src/hello_ai.py`
-- [ ] Load the model using HuggingFace pipeline
-- [ ] Run: input `"I have fever and headache"` → see disease output
+- [x] Create `backend/hello_ai.py`
+- [x] Load `facebook/bart-large-mnli` model using HuggingFace pipeline
+- [x] Run: input `"I have fever, headache and body aches"` → see disease output
+- [x] Tested with multiple symptom inputs (chest pain, rash, frequent urination)
+- [x] Understood why disease list must include the right categories
 - [ ] Commit `hello_ai.py` to GitHub
+
+#### ✅ Q&A Answers Completed
+- [x] T1 — Model used: `facebook/bart-large-mnli` (Meta's BART, zero-shot NLI model). Chosen because it is free, runs locally, requires no medical training data, industry-standard for zero-shot classification.
+- [x] T2 — We did NOT train the model. We use a pre-trained model from HuggingFace. Like using a NuGet package — someone else built and trained it, we just call it.
+- [x] T3 — HuggingFace is the NuGet Gallery / GitHub of the AI world. 500,000+ free pre-trained models. 3 lines of code to load a model.
+- [x] A2 — Model runs 100% locally. Downloaded once (~1.6GB) to local cache. Never calls the internet during inference. Patient symptoms never leave our infrastructure → GDPR compliant.
+
+#### 🧠 Key Concepts Understood (Day 3)
+- **Tokenization:** Text → token IDs (numbers). "fever" → 8915. AI only understands numbers.
+- **Embeddings:** Token IDs → 768-dimensional meaning vectors. Similar words → similar vectors. This is why "fever" and "high temperature" match the same disease.
+- **NLI (Natural Language Inference):** For each disease, tests "Does this symptom text entail this disease?" Returns entailment score per disease.
+- **Softmax:** Normalizes raw entailment scores into percentages summing to 100%.
+- **Zero-shot classification requires candidate labels** — the symptom input is free text but diseases must be provided. With only 5 diseases in the list, Diabetes cannot be found. With full Kaggle dataset (41 diseases), accuracy improves dramatically.
+- **Local HuggingFace model vs GPT-4/Claude API:** Local = free + GDPR safe + offline. API = paid + data leaves machine + internet dependent.
 
 ---
 
@@ -455,3 +475,17 @@ ai-automated-disease-classification/
 ### Session 1
 - Project initialized, 2-week plan created with Q&A bank
 - `Progress.md` committed to GitHub
+
+### Session 2 (Day 2)
+- AI / ML / NLP core concepts covered
+- Q&A answers filled: M1, M6, T10
+- Concept hierarchy: AI → ML → Deep Learning → NLP
+
+### Session 3 (Day 3)
+- `backend/hello_ai.py` created and running ✅
+- `facebook/bart-large-mnli` model downloaded (~1.6GB, cached locally)
+- Tested with: fever/headache, chest pain, rash/joint pain, frequent urination/thirst
+- Discovered: disease list must include the target disease or model cannot find it
+- Internals deep-dive: Tokenization → Embeddings → NLI → Softmax
+- Q&A answers filled: T1, T2, T3, A2
+- **Next:** Day 4 — Kaggle dataset download + pandas data exploration
