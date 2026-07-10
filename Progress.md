@@ -33,7 +33,7 @@ Day 5 → AI Classification Pipeline       Day 10 → Demo Rehearsal + Final Pus
 | 1 | ⚙️ Setup | Python env + Node.js + React app scaffolded | What is Python? Why FastAPI not C# API? | ✅ Complete |
 | 2 | 🧠 Concepts | Personal concept cheat-sheet | AI vs ML vs DL vs NLP — explain each | ✅ Complete |
 | 3 | 🤗 First Model | `hello_ai.py` prints a real classification | What is HuggingFace? What is a model? | ✅ Complete |
-| 4 | 📊 Dataset | Dataset downloaded + explored | Where does training data come from? | ⏳ Pending |
+| 4 | 📊 Dataset | Dataset downloaded + explored | Where does training data come from? | ✅ Complete |
 | 5 | 🔧 AI Pipeline | Full pipeline: symptoms → model → disease + confidence | What is tokenization? How does inference work? | ⏳ Pending |
 
 ### ── WEEK 2: Full Stack Build & Demo ──
@@ -289,12 +289,21 @@ ai-automated-disease-classification/
 - Q&A answers to fill: C2, C5
 
 #### 💻 IMPLEMENT
-- [ ] Create Kaggle account at kaggle.com
-- [ ] Find and download the disease-symptoms dataset
-- [ ] Place it in `data/symptoms_dataset.csv`
-- [ ] Write a script to load and explore it with `pandas`
-- [ ] Print: how many rows, how many diseases, sample rows
-- [ ] Commit dataset exploration script to GitHub
+- [x] Downloaded disease-symptoms dataset from Kaggle
+- [x] Placed in `backend/data/symptoms_dataset.csv`
+- [x] Created `backend/explore_data.py` with pandas exploration
+- [x] Confirmed: 4,920 rows | 18 columns | 41 unique diseases
+- [x] Committed to GitHub
+
+#### ✅ Q&A Answers Completed
+- [x] C2 — 41 diseases: AIDS, Acne, Allergy, Arthritis, Bronchial Asthma, Cervical Spondylosis, Chicken Pox, Common Cold, Dengue, Diabetes, Dimorphic Hemorrhoids, Drug Reaction, Fungal Infection, GERD, Gastroenteritis, Heart Attack, Hepatitis A/B/C/D/E, Hypertension, Hyperthyroidism, Hypoglycemia, Impetigo, Jaundice, Malaria, Migraine, Osteoarthritis, Paralysis, Peptic Ulcer, Pneumonia, Psoriasis, Tuberculosis, Typhoid, Urinary Tract Infection, Varicose Veins.
+- [x] C5 — Dataset sourced from Kaggle "Disease Symptom Prediction" — 4,920 real medical cases with clinically documented symptom combinations.
+
+#### 🧠 Key Concepts Understood (Day 4)
+- **Dataset structure:** 1 Disease column + Symptom_1 to Symptom_17 (17 symptom columns per row)
+- **NaN values:** Many symptom columns are empty (NaN) — diseases have different numbers of symptoms. Must handle in pipeline.
+- **pandas:** Python's data analysis library. Like DataTable in C# but far more powerful. `df.head()`, `df.nunique()`, `df['col'].unique()` are key methods.
+- **Why this dataset matters:** With 41 diseases in the list (vs 5 hardcoded), Diabetes, Hypertension, Pneumonia etc. now get correctly classified.
 
 ---
 
@@ -480,6 +489,14 @@ ai-automated-disease-classification/
 - AI / ML / NLP core concepts covered
 - Q&A answers filled: M1, M6, T10
 - Concept hierarchy: AI → ML → Deep Learning → NLP
+
+### Session 4 (Day 4)
+- Downloaded Kaggle disease-symptoms dataset
+- Created `backend/explore_data.py` — pandas exploration script
+- Dataset confirmed: 4,920 rows | 18 columns | 41 diseases
+- Key insight: symptoms are in 17 separate columns — must merge in pipeline (Day 5)
+- Q&A answers filled: C2, C5
+- **Next:** Day 5 — Full AI classification pipeline using real dataset
 
 ### Session 3 (Day 3)
 - `backend/hello_ai.py` created and running ✅
