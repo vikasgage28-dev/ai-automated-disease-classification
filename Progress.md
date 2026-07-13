@@ -40,7 +40,7 @@ Day 5 → AI Classification Pipeline       Day 10 → Demo Rehearsal + Final Pus
 
 | Day | Theme | Build Goal | Learn Goal (for Q&A) | Status |
 |-----|-------|-----------|----------------------|--------|
-| 6 | 🌐 FastAPI | Python REST API — `/classify` endpoint live | What is FastAPI? How does React talk to Python? | ⏳ Pending |
+| 6 | 🌐 FastAPI | Python REST API — `/classify` endpoint live | What is FastAPI? How does React talk to Python? | ✅ Complete |
 | 7 | ⚛️ React Part 1 | React components + wired to FastAPI + data displayed | What is React? What is a component? | ⏳ Pending |
 | 8 | 🎨 React Part 2 | Tailwind CSS — responsive cards, confidence bars, polish | How would this go to production? | ⏳ Pending |
 | 9 | 🧪 Testing | Full integration tests + edge cases + limitations docs | What can it NOT do? What are the risks? | ⏳ Pending |
@@ -368,13 +368,40 @@ ai-automated-disease-classification/
 - Q&A answers to fill: T5, A3
 
 #### 💻 IMPLEMENT
-- [ ] Create `backend/main.py` with FastAPI
-- [ ] Define request/response models (Pydantic — C# analogy: DTOs / record types)
-- [ ] Add `POST /classify` endpoint that calls `pipeline.py`
-- [ ] Add CORS middleware (allow React `localhost:5173` to call it)
-- [ ] Run: `uvicorn main:app --reload`
-- [ ] Test in browser auto-generated Swagger UI at `/docs`
-- [ ] Commit to GitHub
+- [x] Created `backend/main.py` with FastAPI
+- [x] Defined Pydantic models: `SymptomRequest`, `DiseaseResult`, `ClassificationResponse`
+- [x] Added `POST /classify` endpoint calling `classify_symptoms()` from pipeline.py
+- [x] Added `GET /health` endpoint → returns `{"status": "ok"}`
+- [x] Added CORS middleware → allows React `localhost:5173` to call the API
+- [x] Fixed indentation bug — endpoints were accidentally inside the class body
+- [x] Ran: `uvicorn main:app --reload` from `backend/` directory
+- [x] Tested in Swagger UI at `http://127.0.0.1:8000/docs` ✅
+- [x] Confirmed JSON response for "chest pain and shortness of breath":
+      Heart attack 0.25 | Hypertension 0.20 | GERD 0.1667
+- [x] Committed to GitHub
+
+#### ✅ Q&A Answers Completed
+- [x] T5 — How does React talk to Python? React sends HTTP POST to FastAPI `/classify` endpoint with JSON body `{"symptoms": "..."}`. FastAPI processes it through pipeline.py and returns JSON `{"results": [...]}`. Identical pattern to calling any .NET REST API from a frontend.
+- [x] A3 — Request/response flow: User types symptoms → React POST /classify → FastAPI receives SymptomRequest → calls classify_symptoms() → returns ClassificationResponse JSON → React displays results.
+- [x] A4 — Add more diseases without retraining: Yes! Just add rows to symptoms_dataset.csv. Pipeline loads diseases dynamically — no code change needed.
+
+#### 🧠 Key Concepts Understood (Day 6)
+- **FastAPI:** Python equivalent of ASP.NET Core Minimal API. Decorator `@app.post("/classify")` = `[HttpPost]` attribute in C#.
+- **Pydantic models:** Python equivalent of C# DTOs / record types. Auto-validates request body and serializes response to JSON.
+- **uvicorn:** Python web server = Kestrel in .NET. Command: `uvicorn main:app --reload` = `dotnet watch run`.
+- **CORS middleware:** Browser blocks cross-origin requests by default. Must explicitly allow `localhost:5173` (React) to call `localhost:8000` (FastAPI).
+- **Swagger UI:** FastAPI auto-generates it at `/docs` — same as .NET Swashbuckle. No extra setup needed.
+- **`--reload` flag:** Auto-restarts server on file save = `dotnet watch run` hot reload.
+- **Full request/response flow:**
+  ```
+  Swagger/React → POST /classify {"symptoms": "chest pain"}
+       ↓
+  FastAPI validates SymptomRequest (Pydantic)
+       ↓
+  classify_symptoms() → pipeline.py → dataset matching + AI
+       ↓
+  ClassificationResponse JSON → {"results": [{"disease": "Heart attack", "confidence": 0.25}]}
+  ```
 
 ---
 
@@ -505,6 +532,15 @@ ai-automated-disease-classification/
 - AI / ML / NLP core concepts covered
 - Q&A answers filled: M1, M6, T10
 - Concept hierarchy: AI → ML → Deep Learning → NLP
+
+### Session 6 (Day 6)
+- Created `backend/main.py` — FastAPI REST API wrapping the pipeline
+- Fixed indentation bug — endpoints accidentally inside Pydantic class body
+- API running on `http://127.0.0.1:8000`
+- Swagger UI live at `/docs` — tested POST /classify and GET /health ✅
+- JSON response confirmed: Heart attack, Hypertension, GERD for chest pain symptoms
+- Q&A answers filled: T5, A3, A4
+- **Next:** Day 7 — React UI Part 1 (components + wired to FastAPI)
 
 ### Session 5 (Day 5)
 - Built `backend/pipeline.py` — core AI engine of the entire POC
