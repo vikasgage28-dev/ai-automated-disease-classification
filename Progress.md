@@ -41,7 +41,7 @@ Day 5 → AI Classification Pipeline       Day 10 → Demo Rehearsal + Final Pus
 | Day | Theme | Build Goal | Learn Goal (for Q&A) | Status |
 |-----|-------|-----------|----------------------|--------|
 | 6 | 🌐 FastAPI | Python REST API — `/classify` endpoint live | What is FastAPI? How does React talk to Python? | ✅ Complete |
-| 7 | ⚛️ React Part 1 | React components + wired to FastAPI + data displayed | What is React? What is a component? | ⏳ Pending |
+| 7 | ⚛️ React Part 1 | React components + wired to FastAPI + data displayed | What is React? What is a component? | ✅ Complete |
 | 8 | 🎨 React Part 2 | Tailwind CSS — responsive cards, confidence bars, polish | How would this go to production? | ⏳ Pending |
 | 9 | 🧪 Testing | Full integration tests + edge cases + limitations docs | What can it NOT do? What are the risks? | ⏳ Pending |
 | 10 | 🎤 Demo Day | Clean GitHub push + dry run rehearsed | Full Q&A prep (all audience types) | ⏳ Pending |
@@ -423,14 +423,30 @@ ai-automated-disease-classification/
 - Q&A answers to fill: T7, A1
 
 #### 💻 IMPLEMENT
-- [ ] Create `frontend/src/components/Header.jsx`
-- [ ] Create `frontend/src/components/SymptomInput.jsx` — textarea + submit + loading state
-- [ ] Create `frontend/src/services/api.js` — axios POST to FastAPI `/classify`
-- [ ] Create `frontend/src/components/ResultCard.jsx` — one disease result
-- [ ] Wire everything in `App.jsx`
-- [ ] Run both: frontend (`npm run dev`) + backend (`uvicorn`) simultaneously
-- [ ] End-to-end test: type symptoms → see real AI results in browser
-- [ ] Commit to GitHub
+- [x] Installed axios via `npm install axios`
+- [x] Created `frontend/src/services/api.ts` — axios POST to FastAPI `/classify`
+- [x] Created `frontend/src/components/Header.tsx` — dark slate header with official POC title
+- [x] Created `frontend/src/components/SymptomInput.tsx` — controlled textarea + Classify + Reset buttons + example chips
+- [x] Created `frontend/src/components/ResultCard.tsx` — disease card with animated confidence bar + medal + color coding
+- [x] Updated `App.tsx` — wired all components, manages state (symptoms, results, loading, error)
+- [x] Added input validation — scores below 10% show friendly error instead of fake results
+- [x] Reset button clears textarea + results + error simultaneously
+- [x] Ran both simultaneously: uvicorn (port 8000) + npm run dev (port 5173)
+- [x] End-to-end test confirmed: type symptoms → real AI results in browser ✅
+- [x] Committed to GitHub
+
+#### ✅ Q&A Answers Completed
+- [x] T7 — What is React? React is a JavaScript library for building UIs from reusable components. Each component = a class with state and a render method. C# analogy: like UserControls in WinForms or Blazor components — each manages its own state and renders HTML.
+- [x] A1 — Architecture: React (port 5173) → axios HTTP POST → FastAPI (port 8000) → pipeline.py → HuggingFace model → JSON response → React renders ResultCards.
+
+#### 🧠 Key Concepts Understood (Day 7)
+- **Component tree:** App → Header + SymptomInput + ResultCard. Each component = one responsibility.
+- **useState:** React's state management. `const [results, setResults] = useState([])` = private field that triggers re-render on change. C# analogy: INotifyPropertyChanged.
+- **Controlled component:** Textarea value driven by React state — not the DOM. Enables Reset to clear the input programmatically.
+- **axios:** HTTP client for React. `axios.post(url, body)` = `HttpClient.PostAsJsonAsync()` in C#.
+- **Two terminals required:** uvicorn (backend) + npm run dev (frontend) must run simultaneously in separate terminals.
+- **CORS:** Browser blocks React (5173) calling FastAPI (8000) unless CORS middleware explicitly allows it — already configured in main.py.
+- **Input validation:** Confidence threshold of 10% — below this, input is meaningless text. Show friendly error instead of misleading results.
 
 ---
 
@@ -532,6 +548,16 @@ ai-automated-disease-classification/
 - AI / ML / NLP core concepts covered
 - Q&A answers filled: M1, M6, T10
 - Concept hierarchy: AI → ML → Deep Learning → NLP
+
+### Session 7 (Day 7)
+- Built complete React UI: Header, SymptomInput, ResultCard, App
+- Installed axios — wired React to FastAPI /classify endpoint
+- Full end-to-end working: type symptoms → AI results in browser ✅
+- Added input validation (10% confidence threshold)
+- Reset button clears textarea + results + error
+- Color-coded confidence bars: green (≥50%) / amber (≥25%) / red (<25%)
+- Q&A answers filled: T7, A1
+- **Next:** Day 8 — Polish, responsive design, loading states, disclaimer
 
 ### Session 6 (Day 6)
 - Created `backend/main.py` — FastAPI REST API wrapping the pipeline
