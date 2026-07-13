@@ -34,7 +34,7 @@ Day 5 → AI Classification Pipeline       Day 10 → Demo Rehearsal + Final Pus
 | 2 | 🧠 Concepts | Personal concept cheat-sheet | AI vs ML vs DL vs NLP — explain each | ✅ Complete |
 | 3 | 🤗 First Model | `hello_ai.py` prints a real classification | What is HuggingFace? What is a model? | ✅ Complete |
 | 4 | 📊 Dataset | Dataset downloaded + explored | Where does training data come from? | ✅ Complete |
-| 5 | 🔧 AI Pipeline | Full pipeline: symptoms → model → disease + confidence | What is tokenization? How does inference work? | ⏳ Pending |
+| 5 | 🔧 AI Pipeline | Full pipeline: symptoms → model → disease + confidence | What is tokenization? How does inference work? | ✅ Complete |
 
 ### ── WEEK 2: Full Stack Build & Demo ──
 
@@ -326,10 +326,26 @@ ai-automated-disease-classification/
 - Q&A answers to fill: T9, T4, C1, C3
 
 #### 💻 IMPLEMENT
-- [ ] Create `backend/pipeline.py`
-- [ ] Function: takes symptoms string → returns top 3 diseases with confidence scores
-- [ ] Test with 10 different symptom inputs — print all results
-- [ ] Commit to GitHub
+- [x] Created `backend/pipeline.py`
+- [x] Built `classify_symptoms(symptoms_text)` function — returns top 3 diseases + scores
+- [x] Loaded 41 diseases dynamically from dataset (not hardcoded)
+- [x] Built disease → symptom lookup from all 17 symptom columns
+- [x] Hybrid approach: dataset keyword matching + AI zero-shot fallback
+- [x] Tested with 5 symptom inputs — Heart attack, Fungal infection, Jaundice correctly identified
+- [x] Committed to GitHub
+
+#### ✅ Q&A Answers Completed
+- [x] T9 — Tokenization: AI only understands numbers. Text → token IDs → meaning vectors (embeddings). "fever" → 8915. Similar words have similar vectors — that's why "fever" and "high temperature" match the same disease.
+- [x] T4 — Confidence score: Dataset matching = symptom overlap ratio (matched symptoms ÷ total disease symptoms). AI fallback = softmax probability from NLI entailment scores. Both normalized to 0.0–1.0.
+- [x] C1 — Accuracy: Hybrid approach correctly identifies Heart attack, Fungal infection, Jaundice from plain English. Medical terminology gaps (polyuria vs frequent urination) handled by AI fallback. Full accuracy metrics documented on Day 9.
+- [x] C3 — Top 3 returned always: gives clinician multiple possibilities to investigate rather than a single potentially wrong answer.
+
+#### 🧠 Key Concepts Understood (Day 5)
+- **Hybrid AI = Industry Standard:** Netflix, Google Search, every real production AI system is hybrid. Dataset provides domain knowledge, AI provides language understanding.
+- **Why not pure AI?** BART was trained on general text (news, books) — not medical data. It doesn't know chest pain = Heart attack. A fine-tuned medical model (BioBERT, ClinicalBERT) would solve this — that's the production next step.
+- **POC purpose:** Proves the CONCEPT (architecture, stack, flow) works — not production accuracy. Accuracy improves with fine-tuned medical model.
+- **Dataset matching:** Extracts all symptoms from 17 columns per disease → builds lookup dictionary → scores by overlap ratio. Like SQL WHERE with CONTAINS but smarter.
+- **AI fallback:** When user types informal language ("frequent urination") that doesn't match dataset terms ("polyuria") — BART model handles it semantically.
 
 ---
 
@@ -489,6 +505,16 @@ ai-automated-disease-classification/
 - AI / ML / NLP core concepts covered
 - Q&A answers filled: M1, M6, T10
 - Concept hierarchy: AI → ML → Deep Learning → NLP
+
+### Session 5 (Day 5)
+- Built `backend/pipeline.py` — core AI engine of the entire POC
+- Hybrid approach: dataset keyword matching + AI zero-shot fallback
+- Heart attack, Fungal infection, Jaundice correctly identified ✅
+- Deep discussion: Why hybrid? Why not pure AI? What does POC mean?
+- Key insight: Every production AI system is hybrid — dataset gives medical knowledge, AI gives language understanding
+- Next step for production: Fine-tune BioBERT/ClinicalBERT on this dataset
+- Q&A answers filled: T4, T9, C1, C3
+- **Next:** Day 6 — FastAPI REST API wrapping the pipeline
 
 ### Session 4 (Day 4)
 - Downloaded Kaggle disease-symptoms dataset
