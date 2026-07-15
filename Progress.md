@@ -3,7 +3,7 @@
 **Developer:** Vikas Gage | **Company:** Decos (Medical Device)
 **Goal:** Type symptoms → AI returns disease name + confidence score
 **Company Deadline:** End of Q3 2026 | **Our Sprint:** 2 Weeks (10 working days)
-**Tech Stack:** Python · FastAPI · HuggingFace Transformers · PyTorch · React 19 · Vite · Tailwind CSS · Kaggle · GitHub
+**Tech Stack:** Python · FastAPI · HuggingFace Transformers · PyTorch · Sentence-Transformers · React 19 · Vite · Tailwind CSS · Kaggle · GitHub
 
 > 💡 **North Star:** At the end of Week 2, you must be able to DEMO the app
 > AND confidently answer any question from the audience — technical or non-technical.
@@ -347,6 +347,15 @@ ai-automated-disease-classification/
 - **Dataset matching:** Extracts all symptoms from 17 columns per disease → builds lookup dictionary → scores by overlap ratio. Like SQL WHERE with CONTAINS but smarter.
 - **AI fallback:** When user types informal language ("frequent urination") that doesn't match dataset terms ("polyuria") — BART model handles it semantically.
 
+#### 🧠 Key Concepts Understood (Day 9 — Semantic Upgrade)
+- **Why keyword matching is not AI:** Checking if a word appears in a string is a `Contains()` operation — deterministic, brittle, not intelligent. Real AI understands *meaning*, not characters.
+- **Embeddings:** An AI model converts any sentence into a vector of 384 numbers (e.g. `all-MiniLM-L6-v2`). Similar meanings → similar vectors. "throwing up" and "vomiting" end up near each other in vector space.
+- **Cosine Similarity:** Measures the angle between two vectors (0 = unrelated, 1 = identical meaning). Used to rank all 41 diseases against the user's input.
+- **Pre-computed embeddings:** At server startup, all 41 disease symptom profiles are encoded once into vectors and cached in memory. Each user request only encodes their input (fast — ~50ms).
+- **`sentence-transformers` library:** Python library from HuggingFace. `model.encode(text)` → 384-dim vector. `util.cos_sim(a, b)` → similarity score. Two lines of code replace the entire keyword matching system.
+- **`all-MiniLM-L6-v2` model:** 90MB multilingual sentence encoder. Trained on 1 billion sentence pairs to understand semantic similarity. Chosen for speed (6 transformer layers vs 12 in BERT-base) and accuracy balance.
+- **C# analogy:** Like replacing a manual `if (text.Contains("fever"))` chain with a trained neural network that understands what "I feel very hot" means without being told.
+
 ---
 
 ### Day 6 — 🌐 FastAPI — Expose AI as REST API
@@ -581,6 +590,15 @@ ai-automated-disease-classification/
 - Added empty input validation + disabled Reset button when textarea is empty
 - Documented 6 known limitations with demo-ready explanations
 - Q&A answers finalised: C4, C6, M5
+- **Upgraded AI engine to Pure Semantic Similarity** — replaced all keyword matching with `sentence-transformers`
+  - Installed `sentence-transformers 5.6.0`
+  - Model: `all-MiniLM-L6-v2` (90MB, 384-dim embeddings)
+  - Disease symptom profiles pre-encoded at startup (41 vectors cached in memory)
+  - Each request: encode user input → cosine similarity against all 41 → top 3 returned
+  - Natural language now works: "throwing up", "I feel very hot", "peeing too much" — no keyword rules
+  - Removed `facebook/bart-large-mnli` (1.6GB) — replaced by 90MB semantic model
+  - Result quality improved: "fever, headache, body aches" → Chicken pox / Malaria / Dengue (clinically correct) vs previous Paralysis (wrong)
+- **New skills gained:** Embeddings, Cosine Similarity, Sentence-Transformers, Semantic Search
 - **Next:** Day 10 — Demo rehearsal + README + final GitHub push
 
 ### Session 8 (Day 8)

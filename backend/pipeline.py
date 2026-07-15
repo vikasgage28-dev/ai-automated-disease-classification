@@ -1,5 +1,10 @@
+import os
 import pandas as pd
-from transformers import pipeline
+
+# Use a local cache folder inside the project to avoid Windows permission issues
+os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), 'models_cache')
+
+from sentence_transformers import SentenceTransformer, util
 
 print("Loading dataset...")
 df = pd.read_csv("data/symptoms_dataset.csv")
@@ -8,59 +13,49 @@ print("Extracting diseases from dataset...")
 diseases = sorted(df['Disease'].unique().tolist())
 print(f"✅ Loaded {len(diseases)} diseases from dataset")
 
-# Build disease → symptom lookup from dataset
+# Build disease → symptom text (human-readable sentence for each disease)
 symptom_columns = [f'Symptom_{i}' for i in range(1, 18)]
-disease_symptoms = {}
+disease_symptom_text = {}
 for disease in diseases:
     rows = df[df['Disease'] == disease]
-    symptoms_set = set()
+    symptoms = set()
     for col in symptom_columns:
         for val in rows[col].dropna():
-            symptoms_set.add(val.strip().lower().replace('_', ' '))
-    disease_symptoms[disease] = symptoms_set
+            symptoms.add(val.strip().lower().replace('_', ' '))
+    # Join all symptoms into a natural sentence: "fever, headache, body ache"
+    disease_symptom_text[disease] = ', '.join(sorted(symptoms))
 
-all_known_symptoms = set()
-for s in disease_symptoms.values():
-    all_known_symptoms.update(s)
+print("Loading AI semantic model (all-MiniLM-L6-v2)...")
+model = SentenceTransformer('all-MiniLM-L6-v2')
+print("✅ Semantic model ready!")
 
-print("Loading AI model...")
-classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
-print("✅ Model ready!\n")
+# Pre-compute disease embeddings at startup (done once, reused for every request)
+print("Computing disease embeddings...")
+disease_names = list(disease_symptom_text.keys())
+disease_texts = [disease_symptom_text[d] for d in disease_names]
+disease_embeddings = model.encode(disease_texts, convert_to_tensor=True)
+print(f"✅ Embeddings ready for {len(disease_names)} diseases\n")
 
 
-def classify_symptoms(symptoms_text):
-    text_lower = symptoms_text.lower()
-    # Individual words from user input (ignore short words like "and", "the", "a")
-    user_words = set(
-        w for w in text_lower.replace(',', ' ').split()
-        if len(w) > 3
-    )
+def classify_symptoms(symptoms_text: str):
+    # Encode the user's input into a 384-dimensional meaning vector
+    user_embedding = model.encode(symptoms_text, convert_to_tensor=True)
 
-    # Step 1: Match user text against known symptoms in dataset
-    matched = set()
-    for symptom in all_known_symptoms:
-        # Full phrase match: "skin rash" in "I have skin rash"
-        if symptom in text_lower:
-            matched.add(symptom)
-        # Word-level match: "fever" matches "high fever", "body" matches "body ache"
-        elif any(word in user_words for word in symptom.split() if len(word) > 3):
-            matched.add(symptom)
+    # Compute cosine similarity between user input and every disease profile
+    # cosine_similarity returns values from -1 to 1; higher = more similar
+    similarities = util.cos_sim(user_embedding, disease_embeddings)[0]
 
-    # Step 2: Score each disease by symptom overlap
-    scores = {}
-    for disease, known in disease_symptoms.items():
-        if known:
-            overlap = len(matched & known)
-            scores[disease] = overlap / len(known)
+    # Get top 3 matches
+    top_indices = similarities.argsort(descending=True)[:3].tolist()
 
-    # Step 3: If dataset matching found results, use them
-    top_score = max(scores.values()) if scores else 0
-    if top_score > 0:
-        sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-        return [(d, s) for d, s in sorted_scores[:3]]
+    results = []
+    for idx in top_indices:
+        disease = disease_names[idx]
+        score = float(similarities[idx])
+        # Clamp score to [0, 1] for the UI confidence bar
+        confidence = round(max(0.0, min(1.0, score)), 4)
+        results.append((disease, confidence))
 
-    # Step 4: Fallback to AI zero-shot if no keyword match
-    result = classifier(symptoms_text, candidate_labels=diseases)
-    return list(zip(result["labels"][:3], result["scores"][:3]))
+    return results
 
 
