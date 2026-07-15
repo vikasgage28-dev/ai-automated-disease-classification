@@ -49,8 +49,16 @@ function App() {
           onChange={setSymptoms}
         />
 
+        {/* Loading spinner */}
+        {loading && (
+          <div className="flex flex-col items-center gap-3 py-6">
+            <div className="w-10 h-10 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin" />
+            <p className="text-sm text-gray-400">Analysing symptoms with AI...</p>
+          </div>
+        )}
+
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-5 py-4 text-sm">
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-4 text-sm">
             ⚠️ {error}
           </div>
         )}
@@ -66,14 +74,24 @@ function App() {
             {results.map((result, i) => (
               <ResultCard key={result.disease} result={result} rank={i} />
             ))}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-2xl px-5 py-3 mt-1">
-              <p className="text-xs text-yellow-700 text-center font-medium">
-                ⚠️ For informational purposes only. Always consult a qualified medical professional.
-              </p>
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mt-1 flex items-start gap-3">
+              <span className="text-amber-500 text-lg mt-0.5">⚠️</span>
+              <div>
+                <p className="text-xs font-bold text-amber-700">Medical Disclaimer</p>
+                <p className="text-xs text-amber-600 mt-0.5">
+                  This tool is for informational and demonstration purposes only.
+                  It does not constitute medical advice. Always consult a qualified
+                  medical professional for diagnosis and treatment.
+                </p>
+              </div>
             </div>
           </div>
         )}
       </main>
+
+      <footer className="text-center py-6 text-xs text-gray-400 border-t border-gray-100 mt-4">
+        Built by Vikas Gage · Decos · 2026 &nbsp;|&nbsp; Powered by HuggingFace Transformers &nbsp;|&nbsp; Python · FastAPI · React
+      </footer>
     </div>
   );
 }

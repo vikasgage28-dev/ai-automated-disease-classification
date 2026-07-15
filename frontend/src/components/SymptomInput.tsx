@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 interface Props {
   onSubmit: (symptoms: string) => void;
   onReset: () => void;
@@ -15,9 +17,21 @@ const EXAMPLES = [
 ];
 
 export default function SymptomInput({ onSubmit, onReset, loading, value, onChange }: Props) {
+  const [inputError, setInputError] = useState('');
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (value.trim()) onSubmit(value.trim());
+    if (!value.trim()) {
+      setInputError('Please enter a text to classify.');
+      return;
+    }
+    setInputError('');
+    onSubmit(value.trim());
+  };
+
+  const handleReset = () => {
+    setInputError('');
+    onReset();
   };
 
   return (
@@ -25,7 +39,7 @@ export default function SymptomInput({ onSubmit, onReset, loading, value, onChan
       <div className="mb-5">
         <h2 className="text-xl font-bold text-gray-800">Describe your symptoms</h2>
         <p className="text-gray-400 text-sm mt-1">
-          Use plain English — e.g. "I have a fever and my head hurts"
+          Use plain English to describe what you are feeling
         </p>
       </div>
 
@@ -39,22 +53,26 @@ export default function SymptomInput({ onSubmit, onReset, loading, value, onChan
           placeholder="e.g. I have chest pain and difficulty breathing..."
           className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-gray-700 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-400 bg-gray-50 placeholder-gray-300"
         />
-        <div className="flex gap-3">
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-semibold py-3.5 rounded-2xl transition-all shadow-sm hover:shadow-md text-sm"
-          >
-            {loading ? '⏳ Analysing...' : '🔍 Classify Symptoms'}
-          </button>
-          <button
-            type="button"
-            onClick={onReset}
-            className="flex-1 py-3.5 rounded-2xl border border-gray-300 text-gray-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50 transition-all text-sm font-semibold"
-          >
-            ✕ Reset
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-semibold py-3.5 rounded-2xl transition-all shadow-sm hover:shadow-md text-sm"
+        >
+          {loading ? '⏳ Analysing...' : '🔍 Classify Symptoms'}
+        </button>
+
+        {inputError && (
+          <p className="text-red-500 text-xs text-center -mt-1">{inputError}</p>
+        )}
+
+        <button
+          type="button"
+          onClick={handleReset}
+          disabled={!value.trim()}
+          className="w-full py-3.5 rounded-2xl border border-gray-300 text-gray-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-sm font-semibold"
+        >
+          ✕ Reset
+        </button>
       </form>
 
       <div className="mt-5">

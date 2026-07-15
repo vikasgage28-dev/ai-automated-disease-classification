@@ -30,11 +30,20 @@ print("✅ Model ready!\n")
 
 def classify_symptoms(symptoms_text):
     text_lower = symptoms_text.lower()
+    # Individual words from user input (ignore short words like "and", "the", "a")
+    user_words = set(
+        w for w in text_lower.replace(',', ' ').split()
+        if len(w) > 3
+    )
 
     # Step 1: Match user text against known symptoms in dataset
     matched = set()
     for symptom in all_known_symptoms:
+        # Full phrase match: "skin rash" in "I have skin rash"
         if symptom in text_lower:
+            matched.add(symptom)
+        # Word-level match: "fever" matches "high fever", "body" matches "body ache"
+        elif any(word in user_words for word in symptom.split() if len(word) > 3):
             matched.add(symptom)
 
     # Step 2: Score each disease by symptom overlap
@@ -55,18 +64,3 @@ def classify_symptoms(symptoms_text):
     return list(zip(result["labels"][:3], result["scores"][:3]))
 
 
-test_cases = [
-    "I have fever, headache and body aches",
-    "I have chest pain and shortness of breath",
-    "I have frequent urination and extreme thirst",
-    "I have skin rash and itching",
-    "I have yellow eyes and dark urine",
-]
-
-for symptoms in test_cases:
-    print(f"Symptoms: {symptoms}")
-    results = classify_symptoms(symptoms)
-    for disease, score in results:
-        bar = "█" * int(score * 20)
-        print(f"  {disease:<35} {bar} {score*100:.1f}%")
-    print()
