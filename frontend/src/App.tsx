@@ -17,7 +17,7 @@ function App() {
     setResults([]);
     try {
       const data = await classifySymptoms(text);
-      const topScore = data.results[0]?.confidence ?? 0;
+      const topScore = data.results[0]?.similarity ?? 0;
       if (topScore < 0.1) {
         setError('No meaningful symptoms detected. Please describe your symptoms in plain English — e.g. "I have fever and headache".');
       } else {
@@ -71,6 +71,11 @@ function App() {
                 Top Matching Conditions
               </h2>
             </div>
+            {results.length > 1 && results[1].confidence >= results[0].confidence * 0.8 && (
+              <div className="bg-sky-50 border border-sky-200 text-sky-700 rounded-2xl px-5 py-3 text-sm">
+                ℹ️ The top conditions are very close. Add more symptoms for a clearer result.
+              </div>
+            )}
             {results.map((result, i) => (
               <ResultCard key={result.disease} result={result} rank={i} />
             ))}

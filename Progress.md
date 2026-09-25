@@ -96,7 +96,7 @@ ai-automated-disease-classification/
 |---|----------|------------------------------|
 | M1 | What problem does this solve? | Doctors and patients waste time on initial symptom triage. This tool instantly analyses symptom text and returns the most likely diseases with confidence scores — speeding up the triage process and surfacing possibilities a clinician can investigate further. |
 | M2 | How long did this take to build? | 10 working days as a solo developer learning Python and AI from scratch. A team of two with prior AI experience could deliver this in 3-4 days. The architecture is deliberately simple and extensible. |
-| M3 | Can we use this in a real product? | This POC proves the concept and architecture work. For production we would: (1) fine-tune a medical-specific model like BioBERT on our dataset for higher accuracy, (2) add user authentication, (3) add audit logging for regulatory compliance, (4) containerise with Docker and deploy to Azure. Estimated production-ready timeline: 6-8 weeks with a small team. |
+| M3 | Can we use this in a real product? | This POC proves the concept and architecture work. For production we would: (1) fine-tune the medical BioBERT model on a richer clinical dataset (e.g. DDXPlus, SNOMED CT) for higher accuracy, (2) add user authentication, (3) add audit logging for regulatory compliance, (4) containerise with Docker and deploy to Azure. Estimated production-ready timeline: 6-8 weeks with a small team. |
 | M4 | What would it cost to run in production? | The HuggingFace model is free and runs locally — zero per-call cost. Infrastructure cost: Azure Container App (~€30-50/month for small scale). No OpenAI/Claude API fees. Scales cost-effectively compared to GPT-4 API which charges per token. |
 | M5 | Is patient data safe? GDPR? | Yes — by design. The AI model runs 100% locally on our own infrastructure. Patient symptoms are never sent to any external service (no OpenAI, no HuggingFace cloud, no third-party API). Data stays within our network boundary. This was a deliberate architectural choice specifically for GDPR compliance in a medical context. |
 | M6 | Can it replace a doctor? | No — and we are very clear about that. This is a decision-support tool, not a diagnostic tool. It surfaces possibilities for a clinician to consider — like a spell-checker helps a writer but never replaces them. Every result shows a disclaimer: "Always consult a qualified medical professional." |
@@ -105,10 +105,10 @@ ai-automated-disease-classification/
 
 | # | Question | Answer (built during sprint) |
 |---|----------|------------------------------|
-| C1 | How accurate is it? | *(Day 6 — filled in with real metrics)* |
+| C1 | How accurate is it? | Measured with `backend/evaluate.py` on 85 plain-English test cases: **87.1% Top-1** (correct disease ranked #1) and **95.3% Top-3** (correct disease in the top 3). Weak spots: single vague symptoms ("fever") and diseases with overlapping symptom lists (Hepatitis D vs Jaundice). |
 | C2 | What diseases can it classify? | *(Day 4 — filled in)* |
 | C3 | What if symptoms match multiple diseases? | *(Day 6 — filled in, shows top 3)* |
-| C4 | What happens with rare or unknown symptoms? | If symptoms don't match known dataset patterns, the AI fallback model runs. If confidence is below 10%, the system shows a friendly message asking for clearer input instead of returning misleading results. In production, rare symptoms would be flagged for human review. |
+| C4 | What happens with rare or unknown symptoms? | If the best raw similarity score is below 0.1, the system shows a friendly message asking for clearer input instead of returning misleading results. When the top two results are close (#2 ≥ 80% of #1), the UI asks the user to add more symptoms. In production, rare symptoms would be flagged for human review. |
 | C5 | Was it trained on real medical data? | The dataset contains 4,920 real clinical cases across 41 diseases with 132 documented symptoms sourced from Kaggle. We use a pre-trained HuggingFace model and match against this medical dataset — no training from scratch required. |
 | C6 | What are the risks if it gets it wrong? | This is why we show top 3 results, display confidence scores, and include a mandatory medical disclaimer. The tool is designed for decision support — not diagnosis. A doctor remains the decision maker. We are transparent about confidence and never claim certainty. |
 
@@ -119,7 +119,7 @@ ai-automated-disease-classification/
 | T1 | What AI model is being used? Why that one? | *(Day 3 — filled in)* |
 | T2 | Did you train the model yourself? | *(Day 3 — filled in)* |
 | T3 | What is HuggingFace? | HuggingFace is the GitHub + NuGet of the AI world — a platform with 500,000+ free pre-trained models. We use their Python library to load a model in 3 lines of code. No training required — just download and use. |
-| T4 | What is a confidence score? How is it calculated? | *(Day 6 — filled in)* |
+| T4 | What is a confidence score? How is it calculated? | Two steps: (1) BioBERT converts the input and each disease profile into 768-number vectors, and cosine similarity measures how close they are (0–1). (2) Softmax with `TEMPERATURE = 0.05` turns the 41 similarity scores into probabilities that add up to 100%. Example: chest pain + shortness of breath → Heart attack 84%, Pneumonia 7%, Asthma 6%. The API returns both `confidence` (probability) and `similarity` (raw score). |
 | T5 | How would we integrate this with our .NET backend? | *(Day 8 — filled in)* |
 | T6 | Can this be deployed to Azure? | Yes. React → Azure Static Web Apps (free tier). FastAPI → Azure Container Apps (serverless, scales to zero). The HuggingFace model runs inside the container — no external API calls. Estimated cost: €30-50/month at low scale. CI/CD via GitHub Actions. |
 | T7 | How does it scale? What if 1000 users hit it? | Currently single-instance. For scale: (1) containerise FastAPI with Docker, (2) deploy to Azure Container Apps with auto-scaling, (3) load the model once at startup — shared across requests. The bottleneck is model inference (~200ms/request). At 1000 concurrent users, we'd add multiple container replicas behind a load balancer. |
@@ -582,6 +582,20 @@ ai-automated-disease-classification/
 - AI / ML / NLP core concepts covered
 - Q&A answers filled: M1, M6, T10
 - Concept hierarchy: AI → ML → Deep Learning → NLP
+
+### Session 10 (Day 10)
+- **Upgraded model to medical BioBERT** — `pritamdeka/BioBERT-mnli-snli-scinli-scitail-mednli-stsb` (~430MB, 768-dim embeddings), cached in `backend/models_cache/`
+- Added plain-English synonyms for clinical symptom names (`SYMPTOM_SYNONYMS` in `pipeline.py`, e.g. polyuria → frequent urination)
+- Created `backend/evaluate.py` + `backend/data/eval_cases.csv` — 85-case accuracy harness
+  - Top-1 accuracy: **87.1%** (74/85) · Top-3 accuracy: **95.3%** (81/85)
+- **Probability calibration** — softmax with `TEMPERATURE = 0.05` converts similarities into probabilities summing to 100%
+  - Before: Heart attack 85% · Pneumonia 72% · Asthma 71% (independent similarity scores)
+  - After: Heart attack 84% · Pneumonia 7% · Asthma 6% (true relative probabilities)
+  - Ranking and accuracy unchanged — only the presentation changed
+- API response now returns `confidence` (probability) and `similarity` (raw score)
+- UI: new match labels (Strong ≥ 40%, Moderate ≥ 15%), near-tie hint when #2 ≥ 80% of #1, "no meaningful symptoms" check uses raw similarity (< 0.1)
+- README.md updated: model, architecture, API response, accuracy section, limitations, roadmap
+- Known limitations: gibberish input above 0.1 similarity still returns results; `TEMPERATURE` hand-picked (could be tuned on the test set)
 
 ### Session 9 (Day 9)
 - Ran 7 test cases via React UI — documented pass/fail in test results log

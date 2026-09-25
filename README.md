@@ -21,12 +21,12 @@
 ## 🖥️ Live Demo — What It Looks Like
 
 ```
-User types:   "I feel very hot, my head hurts and body aches"
+User types:   "chest pain and shortness of breath"
 
 AI returns:
-  🥇 Chicken pox      65%  ████████████████████
-  🥈 Malaria          64%  ███████████████████
-  🥉 Dengue           61%  ██████████████████
+  🥇 Heart attack       84%  █████████████████
+  🥈 Pneumonia           7%  █
+  🥉 Bronchial Asthma    6%  █
 
   ⚠️ Medical Disclaimer: For demonstration only. Consult a doctor.
 ```
@@ -43,16 +43,17 @@ AI returns:
        │
        ▼
  AI Pipeline (pipeline.py)
-  ├─ Sentence-Transformers model: all-MiniLM-L6-v2
-  ├─ Converts symptoms text → 384-dimensional meaning vector
-  ├─ Compares against 41 pre-computed disease vectors
-  └─ Returns top 3 by cosine similarity score
+  ├─ Sentence-Transformers model: BioBERT (medical)
+  ├─ Converts symptoms text → 768-dimensional meaning vector
+  ├─ Compares against 41 pre-computed disease vectors (cosine similarity)
+  ├─ Converts similarities into probabilities across all 41 diseases (softmax)
+  └─ Returns top 3 by probability
        │
        ▼
  Kaggle Dataset (4,920 cases · 41 diseases · 17 symptom columns)
 ```
 
-**Key point:** No keyword rules. No if/else matching. The AI understands the *meaning* of your text using embeddings — the same technology behind Google Search and ChatGPT.
+**Key point:** No keyword rules. No if/else matching. The AI understands the *meaning* of your text using embeddings — the same technology behind Google Search and ChatGPT. The dataset's clinical symptom names are enriched with plain-English descriptions (e.g. "polyuria (frequent urination)") so the disease profiles read like everyday language.
 
 ---
 
@@ -60,7 +61,7 @@ AI returns:
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| AI Model | `sentence-transformers/all-MiniLM-L6-v2` | Semantic symptom understanding |
+| AI Model | `pritamdeka/BioBERT-mnli-snli-scinli-scitail-mednli-stsb` | Medical semantic symptom understanding |
 | AI Framework | HuggingFace + PyTorch | Model loading and inference |
 | Backend API | Python 3.13 + FastAPI | REST endpoint `/classify` |
 | Frontend | React 19 + TypeScript + Tailwind CSS | User interface |
@@ -74,7 +75,7 @@ AI returns:
 ### Prerequisites
 - Python 3.10+ installed
 - Node.js 18+ installed
-- ~500MB disk space (AI model downloads on first run)
+- ~1GB disk space (AI model downloads on first run)
 
 ### Step 1 — Clone the repository
 ```bash
@@ -96,7 +97,7 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-> ⏳ **First run only:** The AI model (~90MB) downloads automatically. Takes ~1 minute. After that, startup is instant.
+> ⏳ **First run only:** The BioBERT model (~430MB) downloads automatically into `backend/models_cache/`. Takes 5-10 minutes. After that, it loads from disk in seconds.
 
 You should see:
 ```
@@ -136,12 +137,14 @@ The backend exposes a REST API at `http://127.0.0.1:8000`
 ```json
 {
   "results": [
-    { "disease": "Heart attack",  "confidence": 0.72 },
-    { "disease": "Hypertension",  "confidence": 0.65 },
-    { "disease": "GERD",          "confidence": 0.58 }
+    { "disease": "Heart attack",     "confidence": 0.8445, "similarity": 0.8472 },
+    { "disease": "Pneumonia",        "confidence": 0.0724, "similarity": 0.7243 },
+    { "disease": "Bronchial Asthma", "confidence": 0.0599, "similarity": 0.7149 }
   ]
 }
 ```
+- `confidence` — probability across all 41 diseases (all 41 add up to 1.0)
+- `similarity` — raw cosine similarity between the input and the disease profile (0 to 1)
 
 ### `GET /health`
 Returns `{ "status": "ok" }` — use this to verify the backend is running.
@@ -161,6 +164,26 @@ This means:
 - **"throwing up"** matches **"vomiting"** — no dictionary needed
 - **A typo** still works if the meaning is close enough
 
+The raw similarity scores are then converted into **probabilities** that add up to 100% across all 41 diseases. A clear winner stands out (e.g. Heart attack 84%, Pneumonia 7%), and when the top two are close the UI shows a hint to add more symptoms.
+
+---
+
+## 📊 Accuracy
+
+Measured with `backend/evaluate.py` against 85 plain-English test cases (`backend/data/eval_cases.csv`, 2+ cases per disease):
+
+| Metric | Result |
+|--------|--------|
+| Top-1 accuracy (correct disease ranked #1) | **87.1%** (74/85) |
+| Top-3 accuracy (correct disease in top 3) | **95.3%** (81/85) |
+
+Run it yourself:
+```bash
+cd backend
+venv\Scripts\activate
+python evaluate.py
+```
+
 ---
 
 ## ⚠️ Known Limitations
@@ -171,6 +194,9 @@ This means:
 | **41 diseases only** | Dataset covers common diseases; rare conditions not included |
 | **No personalisation** | Does not consider age, gender, or medical history |
 | **Common symptoms** | Fever + headache appear in many diseases — results may be ambiguous |
+| **Single-symptom input** | One vague symptom (e.g. "fever") gives unreliable results |
+| **Overlapping profiles** | Diseases with similar symptom lists (e.g. Hepatitis D vs Jaundice) can swap places |
+| **Gibberish input** | Nonsense text above the 0.1 similarity cut-off still returns results |
 | **English only** | Model performs best with English symptom descriptions |
 
 ---
@@ -179,7 +205,7 @@ This means:
 
 If this POC is approved, the production version would include:
 
-1. **Fine-tuned medical model** — Train BioBERT or ClinicalBERT on the dataset for higher accuracy
+1. **Fine-tuned medical model** — Fine-tune the BioBERT model on a richer clinical dataset (e.g. DDXPlus, SNOMED CT) for higher accuracy
 2. **Azure deployment** — React → Azure Static Web App, FastAPI → Azure Container App
 3. **Patient history integration** — Connect to EHR system for personalised results
 4. **Human review workflow** — Low-confidence results flagged for clinician review
@@ -195,11 +221,13 @@ ai-automated-disease-classification/
 ├── Progress.md                  ← Full sprint log + Q&A bank
 │
 ├── backend/
-│   ├── pipeline.py              ← AI engine (semantic similarity)
+│   ├── pipeline.py              ← AI engine (BioBERT similarity + softmax)
 │   ├── main.py                  ← FastAPI REST API
+│   ├── evaluate.py              ← Accuracy test harness (Top-1 / Top-3)
 │   ├── requirements.txt         ← Python dependencies
 │   └── data/
-│       └── symptoms_dataset.csv ← Kaggle dataset (41 diseases)
+│       ├── symptoms_dataset.csv ← Kaggle dataset (41 diseases)
+│       └── eval_cases.csv       ← 85 plain-English test cases
 │
 └── frontend/
     ├── src/

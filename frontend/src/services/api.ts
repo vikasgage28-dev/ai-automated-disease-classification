@@ -5,6 +5,7 @@ const API_URL = 'http://127.0.0.1:8000';
 export interface DiseaseResult {
   disease: string;
   confidence: number;
+  similarity: number;
 }
 
 export interface ClassificationResponse {

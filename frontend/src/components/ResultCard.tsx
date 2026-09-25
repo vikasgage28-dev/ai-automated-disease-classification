@@ -12,8 +12,8 @@ const RANK_STYLES = [
 ];
 
 function getBar(confidence: number) {
-  if (confidence >= 0.5) return { color: 'bg-emerald-500', label: 'Strong match', text: 'text-emerald-600' };
-  if (confidence >= 0.25) return { color: 'bg-amber-400', label: 'Moderate match', text: 'text-amber-600' };
+  if (confidence >= 0.4) return { color: 'bg-emerald-500', label: 'Strong match', text: 'text-emerald-600' };
+  if (confidence >= 0.15) return { color: 'bg-amber-400', label: 'Moderate match', text: 'text-amber-600' };
   return { color: 'bg-rose-400', label: 'Weak match', text: 'text-rose-500' };
 }
 
@@ -43,7 +43,7 @@ export default function ResultCard({ result, rank }: Props) {
       </div>
 
       <p className="text-xs text-gray-400 text-right">
-        Confidence score: {result.confidence.toFixed(4)}
+        Similarity score: {result.similarity.toFixed(4)}
       </p>
     </div>
   );

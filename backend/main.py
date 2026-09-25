@@ -18,6 +18,7 @@ class SymptomRequest(BaseModel):
 class DiseaseResult(BaseModel):
     disease: str
     confidence: float
+    similarity: float
 
 class ClassificationResponse(BaseModel):
     results: list[DiseaseResult]
@@ -27,8 +28,8 @@ class ClassificationResponse(BaseModel):
 def classify(request: SymptomRequest):
     raw_results = classify_symptoms(request.symptoms)
     results = [
-        DiseaseResult(disease=d, confidence=round(s, 4))
-        for d, s in raw_results
+        DiseaseResult(disease=d, confidence=c, similarity=s)
+        for d, c, s in raw_results
     ]
     return ClassificationResponse(results=results)
 
